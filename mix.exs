@@ -30,6 +30,7 @@ defmodule Multitenancy.Mixfile do
   defp deps do
     [
      {:plug, "~> 1.4 or ~> 1.3.3 or ~> 1.2.4 or ~> 1.1.8 or ~> 1.0.5"},
+     {:ecto, "~> 2.0.6"},
     ]
   end
 end
