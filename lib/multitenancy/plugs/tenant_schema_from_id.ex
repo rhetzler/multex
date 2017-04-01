@@ -1,4 +1,4 @@
-defmodule MultiTenancy.Plugs.TenantSchemaFromId do
+defmodule Multitenancy.Plugs.TenantSchemaFromId do
   @moduledoc """
   A plug for extracting the tenant schema from an id
 
@@ -21,7 +21,7 @@ defmodule MultiTenancy.Plugs.TenantSchemaFromId do
   end
 
   def init(opts) do
-    lookup = Keyword.get(opts, :lookup) || &MultiTenancy.Plugs.TenantSchemaFromId.prepend_schema/1
+    lookup = Keyword.get(opts, :lookup) || &Multitenancy.Plugs.TenantSchemaFromId.prepend_schema/1
     opts |> Keyword.put(:lookup, lookup)
   end
 

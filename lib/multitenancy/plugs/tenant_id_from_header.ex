@@ -1,4 +1,4 @@
-defmodule MultiTenancy.Plugs.TenantIdFromHeader do
+defmodule Multitenancy.Plugs.TenantIdFromHeader do
   @moduledoc """
   A plug for extracting the tenant uuid from a header
 
