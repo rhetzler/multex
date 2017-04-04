@@ -106,8 +106,4 @@ defmodule Multitenancy.TenantRepo.RepoWrapper do
         tenant_annotated_struct(struct, prefix)
     end
 
-    def get_var_splice(context_var) do
-        [ quote do: var!(unquote(Macro.var(context_var,nil))) ]
-    end
-
 end
