@@ -10,11 +10,11 @@ use Mix.Config
 
 # You can configure for your application as:
 #
-#     config :multitenancy, key: :value
+#     config :multex, key: :value
 #
 # And access this configuration in your application as:
 #
-#     Application.get_env(:multitenancy, :key)
+#     Application.get_env(:multex, :key)
 #
 # Or configure a 3rd-party app:
 #

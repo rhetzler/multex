@@ -1,6 +1,6 @@
-defmodule Multitenancy.TenantSchemaFromIdPlugTest do
+defmodule Multex.TenantSchemaFromIdPlugTest do
     use ExUnit.Case, async: true
-    use Multitenancy.ConnCase
+    use Multex.ConnCase
 
     def deterministic_lookup(_id) do
       "4"
@@ -10,16 +10,16 @@ defmodule Multitenancy.TenantSchemaFromIdPlugTest do
       "customer_" <> id
     end
 
-    @default_opts Multitenancy.Plugs.TenantSchemaFromId.init([])
-    @other_config Multitenancy.Plugs.TenantSchemaFromId.init(lookup: &Multitenancy.TenantSchemaFromIdPlugTest.deterministic_lookup/1)
-    @function_config Multitenancy.Plugs.TenantSchemaFromId.init(lookup: &Multitenancy.TenantSchemaFromIdPlugTest.function_lookup/1)
+    @default_opts Multex.Plugs.TenantSchemaFromId.init([])
+    @other_config Multex.Plugs.TenantSchemaFromId.init(lookup: &Multex.TenantSchemaFromIdPlugTest.deterministic_lookup/1)
+    @function_config Multex.Plugs.TenantSchemaFromId.init(lookup: &Multex.TenantSchemaFromIdPlugTest.function_lookup/1)
 
     test "raises error if no assign" do
       conn = conn(:get, "/hello")
 
       #@TODO have a better error case here?
       assert_raise(KeyError, fn ->
-        conn = Multitenancy.Plugs.TenantSchemaFromId.call(conn, @default_opts)
+        conn = Multex.Plugs.TenantSchemaFromId.call(conn, @default_opts)
       end)
 
     end
@@ -27,7 +27,7 @@ defmodule Multitenancy.TenantSchemaFromIdPlugTest do
     test "generates default schema pattern when set" do
       conn = conn(:get, "/hello") |> Plug.Conn.assign(:tenant_id, "foo")
 
-      conn = Multitenancy.Plugs.TenantSchemaFromId.call(conn, @default_opts)
+      conn = Multex.Plugs.TenantSchemaFromId.call(conn, @default_opts)
 
       assert conn.assigns.tenant_schema == "schema_foo"
 
@@ -36,7 +36,7 @@ defmodule Multitenancy.TenantSchemaFromIdPlugTest do
     test "computes other schemas when alternate lookup configured" do
       conn = conn(:get, "/hello") |> Plug.Conn.assign(:tenant_id, "foo")
 
-      conn = Multitenancy.Plugs.TenantSchemaFromId.call(conn, @other_config)
+      conn = Multex.Plugs.TenantSchemaFromId.call(conn, @other_config)
 
       assert conn.assigns.tenant_schema == "4"
     end
@@ -44,7 +44,7 @@ defmodule Multitenancy.TenantSchemaFromIdPlugTest do
     test "specifically test tenant_uuid case" do
       conn = conn(:get, "/hello") |> Plug.Conn.assign(:tenant_id, "abc")
 
-      conn = Multitenancy.Plugs.TenantSchemaFromId.call(conn, @function_config)
+      conn = Multex.Plugs.TenantSchemaFromId.call(conn, @function_config)
 
       assert conn.assigns.tenant_schema == "customer_abc"
     end

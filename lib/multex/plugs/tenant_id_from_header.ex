@@ -1,10 +1,10 @@
-defmodule Multitenancy.Plugs.TenantIdFromHeader do
+defmodule Multex.Plugs.TenantIdFromHeader do
   @moduledoc """
   A plug for extracting the tenant uuid from a header
 
   By default the header TENANT_ID is expected, however this can be configured:
 
-  plug MultiTenancy.Plugs.TenantIdFromHeader, header: "tenant_uuid"
+  plug Multex.Plugs.TenantIdFromHeader, header: "tenant_uuid"
   note: the parser will only accept lower-case header specifications, even if the header is sent uppercase
 
   The identifier is then placed into a connection assigns "tenant_id" for use downstream (see TenantSchemaFromId)

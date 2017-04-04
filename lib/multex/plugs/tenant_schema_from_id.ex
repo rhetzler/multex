@@ -1,4 +1,4 @@
-defmodule Multitenancy.Plugs.TenantSchemaFromId do
+defmodule Multex.Plugs.TenantSchemaFromId do
   @moduledoc """
   A plug for extracting the tenant schema from an id
 
@@ -10,7 +10,7 @@ defmodule Multitenancy.Plugs.TenantSchemaFromId do
 
   def prepend_tenant(id) do "tenant_" <> id end
 
-  plug Multitenancy.Plugs.TenantSchemaFromId, lookup: &MyModule.prepend_tenant/1
+  plug Multex.Plugs.TenantSchemaFromId, lookup: &MyModule.prepend_tenant/1
 
   - if there is a way to make this work with anonymous functions, please let me know
   """
@@ -21,7 +21,7 @@ defmodule Multitenancy.Plugs.TenantSchemaFromId do
   end
 
   def init(opts) do
-    lookup = Keyword.get(opts, :lookup) || &Multitenancy.Plugs.TenantSchemaFromId.prepend_schema/1
+    lookup = Keyword.get(opts, :lookup) || &Multex.Plugs.TenantSchemaFromId.prepend_schema/1
     opts |> Keyword.put(:lookup, lookup)
   end
 

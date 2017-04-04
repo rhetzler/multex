@@ -1,4 +1,4 @@
-defmodule Multitenancy.TenantRepo.Macros do
+defmodule Multex.TenantRepo.Macros do
 
   defmacro __using__(options) do
     quote bind_quoted: [options: options] do

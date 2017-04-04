@@ -1,6 +1,6 @@
-defmodule Multitenancy do
+defmodule Multex do
   @moduledoc """
-  Documentation for Multitenancy.
+  Documentation for Multex.
   """
 
   @doc """
@@ -8,7 +8,7 @@ defmodule Multitenancy do
 
   ## Examples
 
-      iex> Multitenancy.hello
+      iex> Multex.hello
       :world
 
   """

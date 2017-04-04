@@ -1,10 +1,10 @@
-defmodule Multitenancy.TenantRepo.RepoWrapper do
+defmodule Multex.TenantRepo.RepoWrapper do
 
   defmacro __using__(options) do
     quote bind_quoted: [options: options] do
 
       defmodule Wrapper do
-        alias Multitenancy.TenantRepo.RepoWrapper
+        alias Multex.TenantRepo.RepoWrapper
 
         @repo Keyword.fetch!(options, :repo)
         @transform Keyword.fetch!(options, :transform)

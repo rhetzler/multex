@@ -1,4 +1,4 @@
-defmodule Multitenancy.TenantRepo do
+defmodule Multex.TenantRepo do
     @moduledoc """
     Yo Dawg. I heard you liked macros,
      so i wrote a macro that writes macros which splice macros into other macros.
@@ -37,7 +37,7 @@ defmodule Multitenancy.TenantRepo do
     # This module provides the ability to parameterize the key aspects of this:
     #  Repo              - Ecto.Repo behaviour object being wrapped
     #  Transform         - Function to obtain schema name/prefix from context_variable
-    #                        (this defaults to &Multitenancy.TenantRepo.schema_from_conn/1
+    #                        (this defaults to &Multex.TenantRepo.schema_from_conn/1
     #                            which recieves the output of the conn plugs defined in this library)
     #  Context_variable  - Parameter bound dynamically from caller lexical scope.
     #                        (this defaults to :conn, attaching to phoenix `conn`-based controllers)
@@ -48,7 +48,7 @@ defmodule Multitenancy.TenantRepo do
 
     # default, minimal definition, uses phoenix conn and provided plugs:
     defmodule MyApplication.TenantRepo do
-      use Multitenancy.TenantRepo,
+      use Multex.TenantRepo,
         repo: UserService.Repo
     end
 
@@ -58,7 +58,7 @@ defmodule Multitenancy.TenantRepo do
       def schema_from_uuid(uuid) do
         "schema_" <> uuid
       end
-      use Multitenancy.TenantRepo,
+      use Multex.TenantRepo,
         repo: MyApplication.Repo,
         transform: &MyApplication.TenantRepo.schema_from_uuid/1,
         context_variable: :tenant_uuid
@@ -66,31 +66,22 @@ defmodule Multitenancy.TenantRepo do
 
     """
 
-  # transform: Multitenancy.TenantRepo.schema_from_conn/1
-  def schema_from_conn(conn) do
-    conn.assigns.tenant_schema
-  end
-  # transform: Multitenancy.TenantRepo.identity/1
-  def identity(token) do
-    token
-  end
-
   # use TenantRepo as a thin wrapper around TenantRepo.Macros with some defaults provided
   defmacro __using__(options) do
     quote bind_quoted: [options: options] do
-      require Multitenancy.TenantRepo.Macros
-      require Multitenancy.TenantRepo.RepoWrapper
+      require Multex.TenantRepo.Macros
+      require Multex.TenantRepo.RepoWrapper
 
       # RepoWrapper provides __MODULE__.Wrapper which wraps YourApp.Repo with the addition of
       #  an extra first-parameter argument which is passed through the :transform and applied to the prefix meta,
       #  the final result of which is passed to the underlying :repo
-      use Multitenancy.TenantRepo.RepoWrapper,
+      use Multex.TenantRepo.RepoWrapper,
           repo: Keyword.fetch!(options, :repo),
-          transform: (Keyword.get(options, :transform) || &Multitenancy.TenantRepo.schema_from_conn/1)
+          transform: (Keyword.get(options, :transform) || &Multex.TenantRepo.schema_from_conn/1)
 
       # Macros provides __MODULE__.<method> macros which bind the context_variable to the first parameter
       #  being passed to the __MODULE__.Wrapper for schema annotation (see RepoWrapper )
-      use Multitenancy.TenantRepo.Macros,
+      use Multex.TenantRepo.Macros,
           context_variable: (Keyword.get(options, :context_variable) || :conn)
 
     end
