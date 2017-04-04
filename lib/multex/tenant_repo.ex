@@ -60,6 +60,10 @@ defmodule Multex.TenantRepo do
 
   """
 
+  def schema_from_conn(conn) do
+    conn.assigns.tenant_schema
+  end
+
   # use TenantRepo as a thin wrapper around TenantRepo.Macros with some defaults provided
   defmacro __using__(options) do
     quote bind_quoted: [options: options] do

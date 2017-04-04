@@ -1,5 +1,9 @@
 defmodule Multex.TenantRepo.RepoWrapper do
 
+  def identity(var) do
+    var
+  end
+
   defmacro __using__(options) do
     quote bind_quoted: [options: options] do
 
@@ -7,7 +11,7 @@ defmodule Multex.TenantRepo.RepoWrapper do
         alias Multex.TenantRepo.RepoWrapper
 
         @repo Keyword.fetch!(options, :repo)
-        @transform Keyword.fetch!(options, :transform)
+        @transform (Keyword.get(options, :transform) || &Multex.TenantRepo.RepoWrapper.identity/1)
 
         # wrapper methods
         def all( var, queryable, opts \\ []) do
