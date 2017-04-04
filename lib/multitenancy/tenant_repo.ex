@@ -66,27 +66,35 @@ defmodule Multitenancy.TenantRepo do
 
     """
 
-    # transform: Multitenancy.TenantRepo.schema_from_conn/1
-    def schema_from_conn(conn) do
-      conn.assigns.tenant_schema
+  # transform: Multitenancy.TenantRepo.schema_from_conn/1
+  def schema_from_conn(conn) do
+    conn.assigns.tenant_schema
+  end
+  # transform: Multitenancy.TenantRepo.identity/1
+  def identity(token) do
+    token
+  end
+
+  # use TenantRepo as a thin wrapper around TenantRepo.Macros with some defaults provided
+  defmacro __using__(options) do
+    quote bind_quoted: [options: options] do
+      require Multitenancy.TenantRepo.Macros
+      require Multitenancy.TenantRepo.RepoWrapper
+
+      # RepoWrapper provides __MODULE__.Wrapper which wraps YourApp.Repo with the addition of
+      #  an extra first-parameter argument which is passed through the :transform and applied to the prefix meta,
+      #  the final result of which is passed to the underlying :repo
+      use Multitenancy.TenantRepo.RepoWrapper,
+          repo: Keyword.fetch!(options, :repo),
+          transform: (Keyword.get(options, :transform) || &Multitenancy.TenantRepo.schema_from_conn/1)
+
+      # Macros provides __MODULE__.<method> macros which bind the context_variable to the first parameter
+      #  being passed to the __MODULE__.Wrapper for schema annotation (see RepoWrapper )
+      use Multitenancy.TenantRepo.Macros,
+          context_variable: (Keyword.get(options, :context_variable) || :conn)
+
     end
-    # transform: Multitenancy.TenantRepo.identity/1
-    def identity(token) do
-      token
-    end
 
-    # use TenantRepo as a thin wrapper around TenantRepo.Macros with some defaults provided
-    defmacro __using__(options) do
-        quote bind_quoted: [options: options] do
-            require Multitenancy.TenantRepo.Macros
-
-            use Multitenancy.TenantRepo.Macros,
-                repo: Keyword.fetch!(options, :repo),
-                transform: (Keyword.fetch!(options, :transform) || &Multitenancy.TenantRepo.schema_from_conn/1),
-                context_variable: (Keyword.get(options, :context_variable) || :conn)
-
-        end
-
-    end
+  end
 end
 
