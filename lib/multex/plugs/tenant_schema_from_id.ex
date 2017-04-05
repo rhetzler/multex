@@ -1,18 +1,25 @@
 defmodule Multex.Plugs.TenantSchemaFromId do
   @moduledoc """
-  A plug for extracting the tenant schema from an id
+    A plug for transforming a tenant identifier to a schema name
 
-  We assume tenant_id has been set to a conn.assigns upstream in the plug pipeline (see tenant_id_from_header)
-   - feel free to determine the identifier via other means and place it into conn.assigns.tenant_id for reuse here
+    We assume tenant_id has been set to a conn.assigns upstream in the plug pipeline (see Multex.Plugs.TenantIdFromHeader)
 
-  By default, this will prepend "schema_" to the identifier, however this can be configured with a function call
-    to generate the schema name for you.
+    This can be supplied by other modules, the interface only assumes that conn.assigns.tenant_id is populated correctly
 
-  def prepend_tenant(id) do "tenant_" <> id end
+    By default, this plug will prepend "schema_" to the identifier, however this can be configured with a function call
+    to generate the schema name for you as follows:
 
-  plug Multex.Plugs.TenantSchemaFromId, lookup: &MyModule.prepend_tenant/1
+      def prepend_tenant(id) do "tenant_" <> id end
 
-  - if there is a way to make this work with anonymous functions, please let me know
+      plug Multex.Plugs.TenantSchemaFromId, lookup: &MyModule.prepend_tenant/1
+
+    The main reason for this paramterization is to allow you to do more dynamic lookups, ie, if you track tenancy via database:
+
+      def tenant_from_database(id) do Repo.get!(Tenant, id).schema end
+
+      plug Multex.Plugs.TenantSchemaFromId, lookup: &MyModule.tenant_from_database/1
+
+    - if there is a way to make this work with anonymous functions, please let me know
   """
   import Plug.Conn
 

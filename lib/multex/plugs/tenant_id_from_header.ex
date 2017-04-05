@@ -1,13 +1,13 @@
 defmodule Multex.Plugs.TenantIdFromHeader do
   @moduledoc """
-  A plug for extracting the tenant uuid from a header
+    A plug for extracting a tenant identifier from an http header
 
-  By default the header TENANT_ID is expected, however this can be configured:
+    By default the header TENANT_ID is expected, however this can be configured:
 
-  plug Multex.Plugs.TenantIdFromHeader, header: "tenant_uuid"
-  note: the parser will only accept lower-case header specifications, even if the header is sent uppercase
+    plug Multex.Plugs.TenantIdFromHeader, header: "tenant_uuid"
+    note: the parser will only accept lower-case header specifications, even if the header is sent uppercase
 
-  The identifier is then placed into a connection assigns "tenant_id" for use downstream (see TenantSchemaFromId)
+    The identifier is then placed into a connection assigns "tenant_id" for use downstream (see TenantSchemaFromId)
   """
   import Plug.Conn
 

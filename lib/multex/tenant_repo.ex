@@ -1,70 +1,64 @@
 defmodule Multex.TenantRepo do
-    @moduledoc """
-    Yo Dawg. I heard you liked macros,
-     so i wrote a macro that writes macros which splice macros into other macros.
-    hope you like it.
+  @moduledoc """
+    TenantRepo provides an Ecto Repo-like interface which ensures queries are directed to a separate
+    schema via tenant-schema-isolation approach to multitenancy
 
     Objective: we want to create a TenantRepo wrapper inside our application which delegates
-     to the standard application Ecto.Repo but adds the behaviour of transparently specifying the
-     tenant prefix so the developer isn't burdened with this task (and prevents bugs... theoretically)
+    to the standard application Ecto.Repo but adds the behaviour of transparently specifying the
+    tenant prefix so the developer isn't burdened with this task (and prevents bugs... theoretically)
 
     Standard query looks like this:
 
-    Repo.all( Model )
+        Repo.all( Model )
 
     in order to specifiy prefix, we have to annotate the query ( Model ) with the prefix:
 
-     Model |> Ecto.Queryable.to_query |> Map.put(:prefix, "tenant_schema_prefix")
+        Repo.all( Model |> Ecto.Queryable.to_query |> Map.put(:prefix, "tenant_schema_prefix") )
 
-    but this adds an immense burden of room for error, as the patterns diverge from Phoenix generation boilerplate.
+    but this adds a burden on the developer and plenty of room for error:
+      * this pattern diverges from Phoenix generation boilerplate
+      * this pattern needs to be applied unilaterally to every [non-meta] query in your application
+
     Instead we want to provide the ability to do this:
 
-    TenantRepo.all( Model )
-    # which would transparently bake in the necessary schema prefix.
-    # However, that prefix is dynamic per connection, so using a precompiled module is not viable.
+        TenantRepo.all( Model )
 
-    # instead, this approach seeks to provide a set of macros which accomplishes this.
-
-
-    TenantRepo.all( Model )
-
-    # therefore expands to (equivalently):
-
-    Repo.all( Model |> Ecto.Queryable.to_query |> Map.put(:prefix, transform.(context_variable) )
-
-    # where transform is a function that extracts the schema name from conn
-
-    # This module provides the ability to parameterize the key aspects of this:
-    #  Repo              - Ecto.Repo behaviour object being wrapped
-    #  Transform         - Function to obtain schema name/prefix from context_variable
-    #                        (this defaults to &Multex.TenantRepo.schema_from_conn/1
-    #                            which recieves the output of the conn plugs defined in this library)
-    #  Context_variable  - Parameter bound dynamically from caller lexical scope.
-    #                        (this defaults to :conn, attaching to phoenix `conn`-based controllers)
+    which would transparently bake in the necessary schema prefix.
+    However, that prefix is dynamic per connection, so using a precompiled module is not viable.
+    So we simulate this with macros.
 
 
-    # This can be configured in your application as follows:
+        TenantRepo.all( Model )
+        # expanded:
+        context_variable |> RepoWrapper( Model )
 
+    RepoWrapper has compile-time bindings to 2 project-specific entities:
+      * Repo (our standard Repo which we are delegating queries to)
+      * transform ( a function which derives the schema prefix from an available context_variable )
 
-    # default, minimal definition, uses phoenix conn and provided plugs:
-    defmodule MyApplication.TenantRepo do
-      use Multex.TenantRepo,
-        repo: UserService.Repo
-    end
+    The entire module interface, then requires 3 things:
+      * Repo
+      * transform
+      * context_variable
 
-    # configrued, if the variable "tenant_uuid" is available in calling context
-    #
-    defmodule MyApplication.TenantRepo do
-      def schema_from_uuid(uuid) do
-        "schema_" <> uuid
-      end
-      use Multex.TenantRepo,
-        repo: MyApplication.Repo,
-        transform: &MyApplication.TenantRepo.schema_from_uuid/1,
-        context_variable: :tenant_uuid
-    end
+    The default minimal implementation, uses plug conn and the plugs provided by Multex:
+        defmodule MyApplication.TenantRepo do
+          use Multex.TenantRepo,
+            repo: UserService.Repo
+        end
 
-    """
+    For more custom configuration, you can specify all 3 (assuming "tenant_uuid" variable is defined in the scope where TenantRepo macros are invoked)
+        defmodule MyApplication.TenantRepo do
+          def schema_from_uuid(uuid) do
+            "schema_" <> uuid
+          end
+          use Multex.TenantRepo,
+            repo: MyApplication.Repo,
+            transform: &MyApplication.TenantRepo.schema_from_uuid/1,
+            context_variable: :tenant_uuid
+        end
+
+  """
 
   # use TenantRepo as a thin wrapper around TenantRepo.Macros with some defaults provided
   defmacro __using__(options) do

@@ -1,6 +1,6 @@
 defmodule Multex do
   @moduledoc """
-  Documentation for Multex.
+  Multex: A suite of functionality aimed at supporting multitenancy in elixir applications.
   """
 
   @doc """
