@@ -19,7 +19,7 @@ defmodule Multex.TenantSchemaFromIdPlugTest do
 
       #@TODO have a better error case here?
       assert_raise(KeyError, fn ->
-        conn = Multex.Plugs.TenantSchemaFromId.call(conn, @default_opts)
+        _conn = Multex.Plugs.TenantSchemaFromId.call(conn, @default_opts)
       end)
 
     end

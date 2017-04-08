@@ -7,92 +7,90 @@ defmodule Multex.TenantRepo.RepoWrapper do
   defmacro __using__(options) do
     quote bind_quoted: [options: options] do
 
-      defmodule Wrapper do
-        alias Multex.TenantRepo.RepoWrapper
+      alias Multex.TenantRepo.RepoWrapper
 
-        @repo Keyword.fetch!(options, :repo)
-        @transform (Keyword.get(options, :transform) || &Multex.TenantRepo.RepoWrapper.identity/1)
+      @repo Keyword.fetch!(options, :repo)
+      @transform (Keyword.get(options, :transform) || &RepoWrapper.identity/1)
 
-        # wrapper methods
-        def all( var, queryable, opts \\ []) do
-          @repo.all( RepoWrapper.tenant_annotated_query(queryable, @transform.(var) ), opts)
-        end
+      # wrapper methods
+      def all( var, queryable, opts \\ []) do
+        @repo.all( RepoWrapper.tenant_annotated_query(queryable, @transform.(var) ), opts)
+      end
 
-        def stream(var, queryable, opts \\ []) do
-          @repo.stream( RepoWrapper.tenant_annotated_query(queryable, @transform.(var) ), opts)
-        end
+      def stream(var, queryable, opts \\ []) do
+        @repo.stream( RepoWrapper.tenant_annotated_query(queryable, @transform.(var) ), opts)
+      end
 
-        def get(var, queryable, id, opts \\ []) do
-          @repo.get( RepoWrapper.tenant_annotated_query(queryable, @transform.(var) ), id, opts)
-        end
+      def get(var, queryable, id, opts \\ []) do
+        @repo.get( RepoWrapper.tenant_annotated_query(queryable, @transform.(var) ), id, opts)
+      end
 
-        def get!(var, queryable, id, opts \\ []) do
-          @repo.get!( RepoWrapper.tenant_annotated_query(queryable, @transform.(var) ), id, opts)
-        end
+      def get!(var, queryable, id, opts \\ []) do
+        @repo.get!( RepoWrapper.tenant_annotated_query(queryable, @transform.(var) ), id, opts)
+      end
 
-        def get_by(var, queryable, clauses, opts \\ []) do
-          @repo.get_by( RepoWrapper.tenant_annotated_query(queryable, @transform.(var) ), clauses, opts)
-        end
+      def get_by(var, queryable, clauses, opts \\ []) do
+        @repo.get_by( RepoWrapper.tenant_annotated_query(queryable, @transform.(var) ), clauses, opts)
+      end
 
-        def get_by!(var, queryable, clauses, opts \\ []) do
-          @repo.get_by!( RepoWrapper.tenant_annotated_query(queryable, @transform.(var) ), clauses, opts)
-        end
+      def get_by!(var, queryable, clauses, opts \\ []) do
+        @repo.get_by!( RepoWrapper.tenant_annotated_query(queryable, @transform.(var) ), clauses, opts)
+      end
 
-        def one(var, queryable, opts \\ []) do
-          @repo.one( RepoWrapper.tenant_annotated_query(queryable, @transform.(var) ), opts)
-        end
+      def one(var, queryable, opts \\ []) do
+        @repo.one( RepoWrapper.tenant_annotated_query(queryable, @transform.(var) ), opts)
+      end
 
-        def one!(var, queryable, opts \\ []) do
-          @repo.one!( RepoWrapper.tenant_annotated_query(queryable, @transform.(var) ), opts)
-        end
+      def one!(var, queryable, opts \\ []) do
+        @repo.one!( RepoWrapper.tenant_annotated_query(queryable, @transform.(var) ), opts)
+      end
 
-        def aggregate(var, queryable, aggregate, field, opts \\ []) do
-          @repo.aggregate( RepoWrapper.tenant_annotated_query(queryable, @transform.(var) ), aggregate, field, opts)
-        end
+      def aggregate(var, queryable, aggregate, field, opts \\ []) do
+        @repo.aggregate( RepoWrapper.tenant_annotated_query(queryable, @transform.(var) ), aggregate, field, opts)
+      end
 
-        def insert_all(var, schema_or_source, entries, opts \\ []) do
-          @repo.insert_all( RepoWrapper.tenant_annotated_changeset_or_struct(schema_or_source, @transform.(var) ), entries, opts)
-        end
+      def insert_all(var, schema_or_source, entries, opts \\ []) do
+        @repo.insert_all( RepoWrapper.tenant_annotated_changeset_or_struct(schema_or_source, @transform.(var) ), entries, opts)
+      end
 
-        def update_all(var, queryable, updates, opts \\ []) do
-          @repo.update_all( RepoWrapper.tenant_annotated_query(queryable, @transform.(var) ), updates, opts)
-        end
+      def update_all(var, queryable, updates, opts \\ []) do
+        @repo.update_all( RepoWrapper.tenant_annotated_query(queryable, @transform.(var) ), updates, opts)
+      end
 
-        def delete_all(var, queryable, opts \\ []) do
-          @repo.delete_all( RepoWrapper.tenant_annotated_query(queryable, @transform.(var) ), opts)
-        end
+      def delete_all(var, queryable, opts \\ []) do
+        @repo.delete_all( RepoWrapper.tenant_annotated_query(queryable, @transform.(var) ), opts)
+      end
 
-        def insert(var, struct, opts \\ []) do
-          @repo.insert( RepoWrapper.tenant_annotated_changeset_or_struct(struct, @transform.(var) ), opts)
-        end
+      def insert(var, struct, opts \\ []) do
+        @repo.insert( RepoWrapper.tenant_annotated_changeset_or_struct(struct, @transform.(var) ), opts)
+      end
 
-        def update(var, struct, opts \\ []) do
-          @repo.update( RepoWrapper.tenant_annotated_changeset_or_struct(struct, @transform.(var) ), opts)
-        end
+      def update(var, struct, opts \\ []) do
+        @repo.update( RepoWrapper.tenant_annotated_changeset_or_struct(struct, @transform.(var) ), opts)
+      end
 
-        def insert_or_update(var, changeset, opts \\ []) do
-          @repo.insert_or_update( RepoWrapper.tenant_annotated_changeset_or_struct(changeset, @transform.(var) ), opts)
-        end
+      def insert_or_update(var, changeset, opts \\ []) do
+        @repo.insert_or_update( RepoWrapper.tenant_annotated_changeset_or_struct(changeset, @transform.(var) ), opts)
+      end
 
-        def delete(var, struct, opts \\ []) do
-          @repo.delete( RepoWrapper.tenant_annotated_changeset_or_struct(struct, @transform.(var) ), opts)
-        end
+      def delete(var, struct, opts \\ []) do
+        @repo.delete( RepoWrapper.tenant_annotated_changeset_or_struct(struct, @transform.(var) ), opts)
+      end
 
-        def insert!(var, struct, opts \\ []) do
-          @repo.insert!( RepoWrapper.tenant_annotated_changeset_or_struct(struct, @transform.(var) ), opts)
-        end
+      def insert!(var, struct, opts \\ []) do
+        @repo.insert!( RepoWrapper.tenant_annotated_changeset_or_struct(struct, @transform.(var) ), opts)
+      end
 
-        def update!(var, struct, opts \\ []) do
-          @repo.update!( RepoWrapper.tenant_annotated_changeset_or_struct(struct, @transform.(var) ), opts)
-        end
+      def update!(var, struct, opts \\ []) do
+        @repo.update!( RepoWrapper.tenant_annotated_changeset_or_struct(struct, @transform.(var) ), opts)
+      end
 
-        def insert_or_update!(var, changeset, opts \\ []) do
-          @repo.insert_or_update( RepoWrapper.tenant_annotated_changeset_or_struct(changeset, @transform.(var) ), opts)
-        end
+      def insert_or_update!(var, changeset, opts \\ []) do
+        @repo.insert_or_update( RepoWrapper.tenant_annotated_changeset_or_struct(changeset, @transform.(var) ), opts)
+      end
 
-        def delete!(var, struct, opts \\ []) do
-          @repo.delete!( RepoWrapper.tenant_annotated_changeset_or_struct(struct, @transform.(var) ), opts)
-        end
+      def delete!(var, struct, opts \\ []) do
+        @repo.delete!( RepoWrapper.tenant_annotated_changeset_or_struct(struct, @transform.(var) ), opts)
       end
     end
   end

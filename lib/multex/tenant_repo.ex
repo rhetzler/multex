@@ -70,16 +70,18 @@ defmodule Multex.TenantRepo do
       require Multex.TenantRepo.Macros
       require Multex.TenantRepo.RepoWrapper
 
-      # RepoWrapper provides __MODULE__.Wrapper which wraps YourApp.Repo with the addition of
-      #  an extra first-parameter argument which is passed through the :transform and applied to the prefix meta,
-      #  the final result of which is passed to the underlying :repo
-      use Multex.TenantRepo.RepoWrapper,
-          repo: Keyword.fetch!(options, :repo),
-          transform: (Keyword.get(options, :transform) || &Multex.TenantRepo.schema_from_conn/1)
+      # To prevent namespace collsion with the macros, we put the Wrapper into a submodule
+      #  this wrapper provides an additional 1st parameter which is transform()ed to our schema
+      defmodule Wrapper do
+        use Multex.TenantRepo.RepoWrapper,
+            repo: Keyword.fetch!(options, :repo),
+            transform: (Keyword.get(options, :transform) || &Multex.TenantRepo.schema_from_conn/1)
+      end
 
       # Macros provides __MODULE__.<method> macros which bind the context_variable to the first parameter
       #  being passed to the __MODULE__.Wrapper for schema annotation (see RepoWrapper )
       use Multex.TenantRepo.Macros,
+          wrapper: __MODULE__.Wrapper,
           context_variable: (Keyword.get(options, :context_variable) || :conn)
 
     end
