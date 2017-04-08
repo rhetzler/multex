@@ -1,5 +1,23 @@
 defmodule Multex.TenantRepo.RepoWrapper do
+  @moduledoc """
+    RepoWrapper provides a set of functions which effectively delegate
+    to a configured Repo, with the added functionality of taking
+    an additional first parameter, transforming it, then applying
+    it to the query/struct/changeset as a namespace specification
 
+    See TenantRepo for more details
+  """
+
+
+  @doc """
+  Identity function.
+
+  an easy-to-reference [sic] method which applies the identity function as the
+  RepoWrapper transform (useful for testing or custom use cases where transforms
+  are pre-applied or unnecessary)
+
+  use RepoWrapper, repo: MyRepo, transform: &Multext.TenantRepo.RepoWrapper.identity/1
+  """
   def identity(var) do
     var
   end
@@ -98,17 +116,37 @@ defmodule Multex.TenantRepo.RepoWrapper do
 
   # helper methods
   # various ways in which we annotate the inputs to enforce the tenant schema
+  @doc """
+    Annotate the query with the supplied prefix
+
+    This causes the query to be performed against the schema supplied by the prefix rather than the default schema
+  """
   def tenant_annotated_query(query, prefix) do
     query |> Ecto.Queryable.to_query |> Map.put(:prefix, prefix )
   end
+  @doc """
+    Annotate the changeset with the supplied prefix
+
+    This causes the changeset to be performed against the schema supplied by the prefix rather than the default schema
+  """
   def tenant_annotated_changeset(changeset, prefix) do
     %Ecto.Changeset{changeset | data: tenant_annotated_struct(changeset.data, prefix) }
   end
+  @doc """
+    Annotate the struct with the supplied prefix
+
+    This causes the struct operation to be performed against the schema supplied by the prefix rather than the default schema
+  """
   def tenant_annotated_struct(struct, prefix) do
     struct |> Ecto.put_meta(prefix: prefix)
   end
 
   # some helpers for inputs which may vary...
+  @doc """
+    Annotate the changeset or struct with the supplied prefix
+
+    This causes the changeset or struct operation to be performed against the schema supplied by the prefix rather than the default schema
+  """
   def tenant_annotated_changeset_or_struct(%Ecto.Changeset{} = changeset, prefix) do
     tenant_annotated_changeset(changeset, prefix)
   end

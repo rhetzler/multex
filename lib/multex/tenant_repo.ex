@@ -30,7 +30,7 @@ defmodule Multex.TenantRepo do
 
         TenantRepo.all( Model )
         # expanded:
-        context_variable |> RepoWrapper( Model )
+        context_variable |> RepoWrapper.all( Model )
 
     RepoWrapper has compile-time bindings to 2 project-specific entities:
       * Repo (our standard Repo which we are delegating queries to)
@@ -41,10 +41,10 @@ defmodule Multex.TenantRepo do
       * transform
       * context_variable
 
-    The default minimal implementation, uses plug conn and the plugs provided by Multex:
+    The default minimal implementation uses plug conn and the plugs provided by Multex:
         defmodule MyApplication.TenantRepo do
           use Multex.TenantRepo,
-            repo: UserService.Repo
+            repo: MyApplication.Repo
         end
 
     For more custom configuration, you can specify all 3 (assuming "tenant_uuid" variable is defined in the scope where TenantRepo macros are invoked)

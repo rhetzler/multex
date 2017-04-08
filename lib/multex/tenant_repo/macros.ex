@@ -1,5 +1,11 @@
 defmodule Multex.TenantRepo.Macros do
+  @moduledoc """
+    Macros provides a set of macros which simulates the Ecto.Repo behaviour,
+    while in practice passing an additional first parameter from the calling
+    context to a wrapper module designed to accomodate the additional parameter
 
+    See TenantRepo for more details
+  """
   defmacro __using__(options) do
     quote bind_quoted: [options: options] do
 
