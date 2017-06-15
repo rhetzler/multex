@@ -19,7 +19,7 @@ defmodule Multex.Plugs.TenantIdFromHeader do
 
   def call(conn, options) do
     case get_req_header(conn, Keyword.fetch!(options, :header)) do
-      [] -> conn |> send_resp(404, "Not Found!")
+      [] -> conn |> send_resp(404, "Not Found!") |> halt
       [tenant_id] -> conn |> assign(:tenant_id, tenant_id)
     end
   end

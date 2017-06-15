@@ -11,6 +11,7 @@ defmodule Multex.TenantIdFromHeaderPlugTest do
 
       conn = Multex.Plugs.TenantIdFromHeader.call(conn, @default_opts)
 
+      assert conn.halted == true
       assert conn.state == :sent
       assert conn.status == 404
       assert conn.resp_body == "Not Found!"
@@ -22,6 +23,7 @@ defmodule Multex.TenantIdFromHeaderPlugTest do
 
       conn = Multex.Plugs.TenantIdFromHeader.call(conn, @default_opts)
 
+      assert conn.halted == false
       assert conn.assigns.tenant_id == "baz"
 
     end
@@ -31,6 +33,7 @@ defmodule Multex.TenantIdFromHeaderPlugTest do
 
       conn = Multex.Plugs.TenantIdFromHeader.call(conn, @other_config)
 
+      assert conn.halted == true
       assert conn.state == :sent
       assert conn.status == 404
       assert conn.resp_body == "Not Found!"
@@ -42,6 +45,7 @@ defmodule Multex.TenantIdFromHeaderPlugTest do
 
       conn = Multex.Plugs.TenantIdFromHeader.call(conn, @other_config)
 
+      assert conn.halted == false
       assert conn.assigns.tenant_id == "bar"
     end
 
@@ -50,6 +54,7 @@ defmodule Multex.TenantIdFromHeaderPlugTest do
 
       conn = Multex.Plugs.TenantIdFromHeader.call(conn, @uuid_config)
 
+      assert conn.halted == false
       assert conn.assigns.tenant_id == "abc"
     end
 
