@@ -10,6 +10,7 @@ defmodule Multex.Plugs.TenantIdFromHeader do
     The identifier is then placed into a connection assigns "tenant_id" for use downstream (see TenantSchemaFromId)
   """
   import Plug.Conn
+  require Logger
 
   def init(opts) do
     header = Keyword.get(opts, :header) || "tenant_id"
@@ -18,9 +19,16 @@ defmodule Multex.Plugs.TenantIdFromHeader do
   end
 
   def call(conn, options) do
-    case get_req_header(conn, Keyword.fetch!(options, :header)) do
-      [] -> conn |> send_resp(404, "Not Found!") |> halt
-      [tenant_id] -> conn |> assign(:tenant_id, tenant_id)
+    header = Keyword.fetch!(options, :header)
+    case get_req_header(conn, header) do
+      [] ->
+        Logger.info("[MULTEX] Received Request without '#{header}' header, returning 404'")
+        conn
+        |> send_resp(404, "Not Found!")
+        |> halt
+      [tenant_id] ->
+        Logger.info("[MULTEX] Received request with '#{header}' header set to '#{tenant_id}'")
+        conn |> assign(:tenant_id, tenant_id)
     end
   end
 

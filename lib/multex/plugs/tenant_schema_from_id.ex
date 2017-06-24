@@ -22,6 +22,7 @@ defmodule Multex.Plugs.TenantSchemaFromId do
     - if there is a way to make this work with anonymous functions, please let me know
   """
   import Plug.Conn
+  require Logger
 
   def prepend_schema(id) do
     "schema_" <> id
@@ -33,7 +34,17 @@ defmodule Multex.Plugs.TenantSchemaFromId do
   end
 
   def call(conn, options) do
-    conn |> assign(:tenant_schema, Keyword.fetch!(options, :lookup).(conn.assigns.tenant_id))
+    lookup_fn = Keyword.fetch!(options, :lookup)
+    tenant_schema = lookup_fn.(conn.assigns.tenant_id)
+    if tenant_schema do
+      Logger.info("[MULTEX] Schema lookup for tenant '#{conn.assigns.tenant_id}' resolved to '#{tenant_schema}'")
+      conn |> assign(:tenant_schema, tenant_schema)
+    else
+      Logger.info("[MULTEX] Schema lookup for tenant '#{conn.assigns.tenant_id}' did not resolve. Invalid tenant id?")
+      conn
+      |> send_resp(404, "Not Found!")
+      |> halt
+    end
   end
 
 end
