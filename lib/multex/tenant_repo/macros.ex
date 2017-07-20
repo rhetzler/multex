@@ -20,6 +20,10 @@ defmodule Multex.TenantRepo.Macros do
         quote do: unquote(get_repo_context_var()) |> unquote(@wrapper_repo).all( unquote(queryable), unquote(opts))
       end
 
+      defmacro stream(queryable, opts \\ []) do
+        quote do: unquote(get_repo_context_var()) |> unquote(@wrapper_repo).stream( unquote(queryable), unquote(opts))
+      end
+
       defmacro get(queryable, id, opts \\ []) do
         quote do: unquote(get_repo_context_var()) |> unquote(@wrapper_repo).get( unquote(queryable), unquote(id), unquote(opts))
       end
@@ -45,6 +49,10 @@ defmodule Multex.TenantRepo.Macros do
         quote do: unquote(get_repo_context_var()) |> unquote(@wrapper_repo).aggregate( unquote(queryable), unquote(aggregate), unquote(field), unquote(opts))
       end
 
+      defmacro insert_all(schema_or_source, entries, opts \\ []) do
+        quote do: unquote(get_repo_context_var()) |> unquote(@wrapper_repo).insert_all( unquote(schema_or_source), unquote(entries), unquote(opts))
+      end
+
       defmacro update_all(queryable, updates, opts \\ []) do
         quote do: unquote(get_repo_context_var()) |> unquote(@wrapper_repo).update_all( unquote(queryable), unquote(updates), unquote(opts))
       end
@@ -55,32 +63,36 @@ defmodule Multex.TenantRepo.Macros do
       defmacro insert(struct, opts \\ []) do
         quote do: unquote(get_repo_context_var()) |> unquote(@wrapper_repo).insert( unquote(struct), unquote(opts))
       end
-      defmacro insert!(struct, opts \\ []) do
-        quote do: unquote(get_repo_context_var()) |> unquote(@wrapper_repo).insert!( unquote(struct), unquote(opts))
-      end
 
       defmacro update(struct, opts \\ []) do
         quote do: unquote(get_repo_context_var()) |> unquote(@wrapper_repo).update( unquote(struct), unquote(opts))
-      end
-      defmacro update!(struct, opts \\ []) do
-        quote do: unquote(get_repo_context_var()) |> unquote(@wrapper_repo).update!( unquote(struct), unquote(opts))
       end
 
       defmacro insert_or_update(struct, opts \\ []) do
         quote do: unquote(get_repo_context_var()) |> unquote(@wrapper_repo).insert_or_update( unquote(struct), unquote(opts))
       end
-      defmacro insert_or_update!(struct, opts \\ []) do
-        quote do: unquote(get_repo_context_var()) |> unquote(@wrapper_repo).insert_or_update!( unquote(struct), unquote(opts))
-      end
 
       defmacro delete(struct, opts \\ []) do
         quote do: unquote(get_repo_context_var()) |> unquote(@wrapper_repo).delete( unquote(struct), unquote(opts))
       end
+
+      defmacro insert!(struct, opts \\ []) do
+        quote do: unquote(get_repo_context_var()) |> unquote(@wrapper_repo).insert!( unquote(struct), unquote(opts))
+      end
+
+      defmacro update!(struct, opts \\ []) do
+        quote do: unquote(get_repo_context_var()) |> unquote(@wrapper_repo).update!( unquote(struct), unquote(opts))
+      end
+
+      defmacro insert_or_update!(struct, opts \\ []) do
+        quote do: unquote(get_repo_context_var()) |> unquote(@wrapper_repo).insert_or_update!( unquote(struct), unquote(opts))
+      end
+
       defmacro delete!(struct, opts \\ []) do
         quote do: unquote(get_repo_context_var()) |> unquote(@wrapper_repo).delete!( unquote(struct), unquote(opts))
       end
 
-      # need a use case to verify preload or insert_all
+      # need a use case to verify preload
 
     end
   end

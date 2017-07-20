@@ -104,7 +104,7 @@ defmodule Multex.TenantRepo.RepoWrapper do
       end
 
       def insert_or_update!(var, changeset, opts \\ []) do
-        @repo.insert_or_update( RepoWrapper.tenant_annotated_changeset_or_struct(changeset, @transform.(var) ), opts)
+        @repo.insert_or_update!( RepoWrapper.tenant_annotated_changeset_or_struct(changeset, @transform.(var) ), opts)
       end
 
       def delete!(var, struct, opts \\ []) do

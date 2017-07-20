@@ -69,7 +69,7 @@ defmodule Multex.MacrosTest do
       assert_receive %{method: :all, var: var, queryable: query , opts: _ }
 
       assert query == TestModel
-      # my_var has be passed through
+      # my_var has been passed through
       assert var == my_var
 
     end
